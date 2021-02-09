@@ -11,8 +11,9 @@ const PORT = process.env.PORT || 2390;
 app.use(express.json());
 
 connectDB();
-// app.use('/', require('./routes/index'));
-// app.use('/api/url', require('./routes/url'));
+
+app.use("/api/v1/", require("./routes/index"));
+app.use("/api/v1/url/", require("./routes/url"));
 
 app.listen(PORT, () => {
 	console.log(`app is listening at ${PORT}`);

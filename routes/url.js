@@ -29,7 +29,7 @@ router.post("/shorten", async (req, res) => {
 					urls,
 				});
 			} else {
-				const shortUrl = `${baseUrl}/${urlCode}`;
+				const shortUrl = `${baseUrl}${urlCode}`;
 				urls = new url({
 					urlCode,
 					longUrl,

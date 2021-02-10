@@ -45,7 +45,9 @@ describe("URL Model Test", () => {
 		expect(savedURL.data).toBeUndefined();
 	});
 
-	afterAll(async () => {
-		mongoose.connection.close();
+	afterAll(() => {
+		mongoose.connection.db.dropDatabase(() => {
+			mongoose.connection.close();
+		});
 	});
 });

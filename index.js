@@ -1,19 +1,6 @@
-const express = require("express");
-const cors = require("cors");
-const connectDB = require("./config/db.js");
+const app = require("./app");
 
-require("dotenv").config();
-
-const app = express();
-
-const PORT = process.env.PORT || 2390;
-
-app.use(express.json());
-
-connectDB();
-
-app.use("/api/v1/", require("./routes/index"));
-app.use("/api/v1/url/", require("./routes/url"));
+const PORT = process.env.NODE_ENV === "test" ? 3001 : process.env.PORT || 2390;
 
 app.listen(PORT, () => {
 	console.log(`app is listening at ${PORT}`);

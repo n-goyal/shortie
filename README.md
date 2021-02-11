@@ -2,14 +2,13 @@
 
 ## 🎉Welcome to this very basic implementation of urlShortner.
 
--   Project implements a basic express backend with mongodb data base hosted on
+-   Project implements a basic express backend with mongodb database hosted on
     MongoDB Atlas 🌏.
 -   While the implementation of a url shortner is the objective🚩, however this
-    project aims to implements CICD and docker builds for automated deployments
+    project aims to implement CICD and docker build for automated deployments
     🔃🔜 and scalability 💪💪.
 
-One can follow the steps below to run the app on their local system (ofcourse OS
-doesn't matter) ➡️➡️
+One can follow the steps below to run the app on their local system ➡️➡️
 
 To run this server on your local system
 

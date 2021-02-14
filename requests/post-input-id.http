@@ -1,0 +1,7 @@
+POST http://localhost:2390/api/v1/url/shorten
+Content-Type: application/json
+
+{
+  "longUrl": "https://www.google.com",
+  "slug": "glg"
+}

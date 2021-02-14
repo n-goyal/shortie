@@ -2,9 +2,11 @@ const mongoose = require("mongoose");
 
 require("dotenv").config();
 
+console.log(process.env.NODE_ENV);
+
 const isTestEnv = process.env.NODE_ENV == "test";
 
-const db = isTestEnv ? global.__MONGO_URI__ : process.env.mongoURI;
+const db = isTestEnv ? global.__MONGO_URI__ : process.env.MONGO_URI;
 
 const connectDB = async () => {
 	try {
@@ -20,4 +22,9 @@ const connectDB = async () => {
 	}
 };
 
-module.exports = connectDB;
+const cleanConnection = async () => {
+	await mongoose.connection.db.dropDatabase();
+	await mongoose.connection.close();
+};
+
+module.exports = { connectDB, cleanConnection };

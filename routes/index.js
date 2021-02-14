@@ -8,7 +8,7 @@ router.get("/:code", async (req, res) => {
 		const urlx = await url.findOne({ urlCode: req.params.code });
 
 		if (urlx) {
-			return res.redirect(urlx.longUrl);
+			return res.status(200).json(urlx);
 		} else {
 			return res.status(404).json({ message: "No URL Found!" });
 		}

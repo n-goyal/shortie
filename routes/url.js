@@ -7,38 +7,34 @@ const url = require("../models/model");
 require("dotenv").config();
 
 router.post("/shorten", async (req, res) => {
-	const { longUrl } = req.body;
-	const baseUrl = "http://localhost:2390/api/v1/";
+	const { longUrl, slug } = req.body;
 
-	if (!validUrl.isUri(baseUrl)) {
-		return res.status(401).json({
-			message: "Internal Error! Please come back later.",
-		});
-	}
+	console.log(`slug is given by the user: ${slug}`);
+	const urlCode = slug ? slug : shortid.generate();
 
-	const urlCode = shortid.generate();
+	const baseUrl = `${process.env.BASE_URL}/api/v1/`;
 
 	if (validUrl.isUri(longUrl)) {
 		try {
-			let urls = await url.findOne({
+			let result = await url.findOne({
 				longUrl: longUrl,
 			});
-			if (urls) {
-				return res.status(200).json({
-					message: "Success",
-					urls,
+			if (result) {
+				return res.status(208).json({
+					message: "Requested URL already exists.",
+					result,
 				});
 			} else {
 				const shortUrl = `${baseUrl}${urlCode}`;
-				urls = new url({
+				result = new url({
 					urlCode,
 					longUrl,
 					shortUrl,
 				});
-				await urls.save();
+				await result.save();
 				return res.status(201).json({
 					message: "Created",
-					urls,
+					result,
 				});
 			}
 		} catch (error) {
@@ -49,7 +45,7 @@ router.post("/shorten", async (req, res) => {
 		}
 	} else {
 		return res.status(400).json({
-			message: "invalid URL",
+			message: "Input URL is invalid, please check and try again!",
 		});
 	}
 });

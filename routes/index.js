@@ -5,16 +5,18 @@ const url = require("../models/model");
 
 router.get("/:code", async (req, res) => {
 	try {
-		const urlx = await url.findOne({ urlCode: req.params.code });
+		const result = await url.findOne({ urlCode: req.params.code });
 
-		if (urlx) {
-			return res.status(200).json(urlx);
+		if (result) {
+			return res.status(200).json(result);
 		} else {
 			return res.status(404).json({ message: "No URL Found!" });
 		}
 	} catch (error) {
 		console.error(error);
-		res.status(500).json({ message: "Server Error" });
+		res.status(500).json({
+			message: "Internal Server Error😥, We'll be back up soon!",
+		});
 	}
 });
 

@@ -26,11 +26,13 @@ describe("URL routes", () => {
 		const postRes = await request.post("/api/v1/url/shorten").send(urlObj);
 		console.log(postRes.status);
 		const urlCode = postRes.body.urls.urlCode;
+		const getRes = await request.get(`/api/v1/${urlCode}`);
 		const url = await urlModel.findOne({ urlCode });
-		console.log(url);
-		expect(url.longUrl).toBe(urlObj.longUrl);
-		expect(url._id).toBeDefined();
-		expect(url.shortUrl).toBeDefined();
+		// console.log(url);
+		console.log(getRes.status);
+		console.log(getRes.body);
+		expect(getRes.body.longUrl).toBe(url.longUrl);
+		expect(getRes.body.shortUrl).toBe(url.shortUrl);
 	});
 
 	afterAll(async () => {

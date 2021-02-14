@@ -2,42 +2,80 @@ const mongoose = require("mongoose");
 const supertest = require("supertest");
 const urlModel = require("../models/model");
 const app = require("../app");
+const { cleanConnection, connectDB } = require("../config/db");
 
 const request = supertest(app);
 
 describe("URL routes", () => {
-	console.log("connecting to the database...");
+	beforeAll(async () => {
+		connectDB();
+	});
 
-	it("POST /shorten - save", async () => {
+	afterAll(async () => {
+		cleanConnection();
+	});
+
+	it("POST /api/v1/shorten - Auto Slug Generation", async () => {
 		const urlObj = {
 			longUrl: "https://www.google.com",
 		};
 		const response = await request.post("/api/v1/url/shorten").send(urlObj);
-		console.log(response.body);
-		console.log(response.status);
 		expect(response.status).toBe(201);
 	});
 
-	it("GET /", async () => {
+	it("POST /api/v1/shorten - Slug Input", async () => {
+		const urlObj = {
+			longUrl: "https://www.hotmail.com",
+			slug: "shortie",
+		};
+		const response = await request.post("/api/v1/url/shorten").send(urlObj);
+		expect(response.status).toBe(201);
+	});
+
+	it("POST /api/v1/shorten - Invalid Input URL", async () => {
+		const urlObj = {
+			longUrl: "hotmail.com",
+			slug: "shortie",
+		};
+		const response = await request.post("/api/v1/url/shorten").send(urlObj);
+		expect(response.status).toBe(400);
+		expect(response.body.message).toBe(
+			"Input URL is invalid, please check and try again!"
+		);
+	});
+
+	it("POST /api/v1/shorten - Input URL already exists", async () => {
+		const urlObj = {
+			longUrl: "https://www.google.com",
+		};
+		await request.post("/api/v1/url/shorten").send(urlObj);
+		const urlObj1 = {
+			longUrl: "https://www.google.com",
+		};
+		const response = await request
+			.post("/api/v1/url/shorten")
+			.send(urlObj1);
+		expect(response.status).toBe(208);
+		expect(response.body.message).toBe("Requested URL already exists.");
+		expect(response.body.result).toBeDefined();
+	});
+
+	it("GET /:slug - Valid Request", async () => {
 		// make an entry to database
 		const urlObj = {
 			longUrl: "https://music.amazon.com",
 		};
 		const postRes = await request.post("/api/v1/url/shorten").send(urlObj);
-		console.log(postRes.status);
-		const urlCode = postRes.body.urls.urlCode;
+		const urlCode = postRes.body.result.urlCode;
 		const getRes = await request.get(`/api/v1/${urlCode}`);
 		const url = await urlModel.findOne({ urlCode });
-		// console.log(url);
-		console.log(getRes.status);
-		console.log(getRes.body);
 		expect(getRes.body.longUrl).toBe(url.longUrl);
 		expect(getRes.body.shortUrl).toBe(url.shortUrl);
 	});
 
-	afterAll(async () => {
-		await mongoose.connection.db.dropDatabase(() => {
-			mongoose.connection.close();
-		});
+	it("GET /:slug - Invalid Slug-No URL Found", async () => {
+		const getRes = await request.get(`/api/v1/invalid_slug`);
+		expect(getRes.status).toBe(404);
+		expect(getRes.body.message).toBe("No URL Found!");
 	});
 });

@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const urlModel = require("../models/model");
+const { cleanConnection, connectDB } = require("../config/db");
 
 const urlData = {
 	longUrl: "https://www.google.com",
@@ -7,23 +8,17 @@ const urlData = {
 	shortUrl: "https://www.short.ie/test_code",
 };
 
-describe("URL Model Test", () => {
-	beforeAll(async () => {
-		try {
-			await mongoose.connect(global.__MONGO_URI__, {
-				useNewUrlParser: true,
-				useUnifiedTopology: true,
-			});
+describe("URL Model", () => {
+	beforeEach(async () => {
+		connectDB();
+	});
 
-			console.log("Database connected...");
-		} catch (err) {
-			console.log(err.message);
-			process.exit(1);
-		}
+	afterEach(async () => {
+		cleanConnection();
 	});
 
 	// insert into db
-	it("Create and Save URL Successfully", async () => {
+	it("Create & Save - Success", async () => {
 		console.log(urlModel);
 		const validURL = new urlModel(urlData);
 		const savedURL = await validURL.save();
@@ -35,7 +30,7 @@ describe("URL Model Test", () => {
 	});
 
 	// insert invalid field
-	it("Create & Save URL with invalid fields to be undefined", async () => {
+	it("Create & Save - Invalid Fields", async () => {
 		const invalidURL = new urlModel({
 			data: "invalid field",
 			longUrl: "https://music.amazon.in",
@@ -43,11 +38,5 @@ describe("URL Model Test", () => {
 		const savedURL = await invalidURL.save();
 		expect(savedURL._id).toBeDefined();
 		expect(savedURL.data).toBeUndefined();
-	});
-
-	afterAll(() => {
-		mongoose.connection.db.dropDatabase(() => {
-			mongoose.connection.close();
-		});
 	});
 });

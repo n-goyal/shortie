@@ -7,5 +7,8 @@ COPY package*.json ./
 RUN npm i --only=production
 # 4. bundle app source
 COPY . .
-EXPOSE 2390
+# EXPOSE 2390
+
+ENV NODE_ENV=production
+
 CMD [ "npm", "start" ]

@@ -12,7 +12,7 @@ router.post("/shorten", async (req, res) => {
 	console.log(`slug is given by the user: ${slug}`);
 	const urlCode = slug ? slug : shortid.generate();
 
-	const baseUrl = `${process.env.BASE_URL}/api/v1/`;
+	const baseUrl = `${process.env.BASE_URL}api/v1/`;
 
 	if (validUrl.isUri(longUrl)) {
 		try {
